@@ -1,26 +1,62 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { ReactElement, ReactNode, useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import { ThemeProvider } from 'styled-components';
+import { theme } from './theme';
+import { Signin, Home } from './Pages';
+import { Header } from './Components';
 
-function App() {
+enum CONSTANTS {
+  TOKEN = 'TOKEN',
+}
+
+interface IPrivateRoute {
+  token: string;
+  children: ReactNode | ReactNode[];
+  path: string;
+  exact?: boolean;
+}
+
+function PrivateRoute({ token, children, ...rest }: IPrivateRoute): ReactElement {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Route
+      {...rest}
+      render={({ location }) =>
+        token ? (
+          children
+        ) : (
+          <Redirect
+            to={{
+              pathname: '/signin',
+              state: { from: location },
+            }}
+          />
+        )
+      }
+    />
   );
 }
 
-export default App;
+export default function App(): ReactElement {
+  const [token, setToken] = useState<null | string>(null);
+
+  useEffect(() => {
+    const localToken = localStorage.getItem(CONSTANTS.TOKEN);
+    setToken(localToken);
+  }, []);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Header />
+      <Router>
+        <Switch>
+          <Route path="/signin" exact>
+            <Signin />
+          </Route>
+          <PrivateRoute token={token} path="/" exact>
+            <Home />
+          </PrivateRoute>
+        </Switch>
+      </Router>
+    </ThemeProvider>
+  );
+}
