@@ -7,6 +7,7 @@ const HeaderWrapper = styled.nav`
   padding: 1rem;
   background-color: ${(props) => props.theme.colors.background};
   color: ${(props) => props.theme.colors.main};
+  border-bottom: 0.1rem solid ${(props) => props.theme.colors.main};
   display: flex;
   flex-direction: row;
   align-items: center;

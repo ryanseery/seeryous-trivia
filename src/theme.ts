@@ -16,7 +16,6 @@ type Theme = {
   colors: {
     main: string;
     background: string;
-    appBackGround: string;
     inputBorder: string;
     text: string;
   };
@@ -25,9 +24,8 @@ type Theme = {
 
 export const theme: Theme = {
   colors: {
-    main: '#ffffff',
-    background: '#72abd8',
-    appBackGround: '#ffffff',
+    main: '#72abd8',
+    background: '#ffffff',
     inputBorder: 'grey',
     text: 'black',
   },
@@ -38,7 +36,6 @@ export const darkTheme: Theme = {
   colors: {
     main: 'white',
     background: 'black',
-    appBackGround: 'black',
     inputBorder: 'grey',
     text: 'black',
   },
