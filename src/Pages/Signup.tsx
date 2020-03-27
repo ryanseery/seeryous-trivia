@@ -1,19 +1,13 @@
 import React, { ReactElement, useState } from 'react';
-import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Layout, Form, Input, Button } from '../Components';
-import { signUserIn, setLocalStorage, CONSTANTS } from '../utils';
+import { registerUser } from '../utils';
+import { FormWrapper } from './Signin';
 
-export const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-export function Signin(): ReactElement {
+export function Signup(): ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmEmail, setConfirmEmail] = useState('');
 
   const history = useHistory();
 
@@ -30,18 +24,31 @@ export function Signin(): ReactElement {
       return;
     }
 
-    const [user, error] = await signUserIn(email, password);
+    if (confirmEmail.length === 0) {
+      alert(`Please confirm password.`);
+      return;
+    }
 
-    if (user?.user) {
-      setLocalStorage(CONSTANTS.TOKEN, user?.user?.refreshToken);
-      history.push('/');
+    if (password !== confirmEmail) {
+      alert('Please confirm password.');
+    }
+
+    console.log({ email, password });
+
+    const [user, error] = await registerUser(email, password);
+    if (error) {
+      console.warn(error);
+    }
+
+    if (user) {
+      history.push('/signin');
     }
   };
 
   return (
     <Layout>
       <FormWrapper>
-        <h2>Sign In</h2>
+        <h2>Sign Up</h2>
         <Form onSubmit={handleSubmit}>
           <label htmlFor="email">
             Email
@@ -56,6 +63,17 @@ export function Signin(): ReactElement {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+            />
+          </label>
+
+          <label htmlFor="confirmEmail">
+            Confirm Password
+            <Input
+              type="password"
+              id="confirmEmail"
+              name="confirmEmail"
+              value={confirmEmail}
+              onChange={(e) => setConfirmEmail(e.target.value)}
             />
           </label>
           <Button type="submit">Sign In</Button>
