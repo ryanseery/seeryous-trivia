@@ -24,7 +24,7 @@ type Theme = {
 
 export const theme: Theme = {
   colors: {
-    main: '#72abd8',
+    main: '#03A9EE',
     background: '#ffffff',
     inputBorder: 'grey',
     text: 'black',

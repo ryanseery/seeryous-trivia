@@ -15,6 +15,12 @@ const HeaderWrapper = styled.nav`
   h1 {
     font-size: ${(props) => props.theme.fontSizes.medium};
   }
+  h2 {
+    margin: 0;
+    padding: 0;
+    font-size: ${(props) => props.theme.fontSizes.small};
+    text-transform: capitalize;
+  }
   ul {
     list-style: none;
     li {
@@ -23,11 +29,9 @@ const HeaderWrapper = styled.nav`
   }
 `;
 
-type Props = {
-  token: null | string;
-};
+type Props = { user: firebase.User };
 
-export function Header({ token = null }: Props): ReactElement {
+export function Header({ user }: Props): ReactElement {
   const location = useLocation();
 
   return (
@@ -37,7 +41,18 @@ export function Header({ token = null }: Props): ReactElement {
       </Link>
       <ul>
         <li>
-          {location.pathname === '/signin' ? <Link to="/signup">Sign Up</Link> : <Link to="/signin">Sign In</Link>}
+          {(() => {
+            switch (location.pathname) {
+              case '/signin':
+                return <Link to="/signup">Sign Up</Link>;
+              case '/signup':
+                return <Link to="/signin">Sign In</Link>;
+              case '/':
+                return <h2>{user?.displayName}</h2>;
+              default:
+                return <h2>{user?.displayName}</h2>;
+            }
+          })()}
         </li>
       </ul>
     </HeaderWrapper>

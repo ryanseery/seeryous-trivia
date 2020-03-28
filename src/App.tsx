@@ -1,24 +1,25 @@
-import React, { ReactElement, ReactNode, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import React, { ReactElement, ReactNode, useContext, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { theme } from './theme';
-import { Signin, Signup, Home } from './Pages';
+import { Signin, Signup, Home, CreateGame } from './Pages';
 import { Header } from './Components';
-import { CONSTANTS } from './@types/constants';
+import { AppContext } from './context';
+import { firebase } from './lib';
 
 interface IPrivateRoute {
-  token: string | null;
   children: ReactNode | ReactNode[];
   path: string;
   exact?: boolean;
+  user: firebase.User;
 }
 
-function PrivateRoute({ token, children, ...rest }: IPrivateRoute): ReactElement {
+function PrivateRoute({ children, user, ...rest }: IPrivateRoute): ReactElement {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        token ? (
+        user ? (
           children
         ) : (
           <Redirect
@@ -33,30 +34,46 @@ function PrivateRoute({ token, children, ...rest }: IPrivateRoute): ReactElement
   );
 }
 
-export default function App(): ReactElement {
-  const [token, setToken] = useState<null | string>(null);
+function Root(): ReactElement {
+  const history = useHistory();
+  const { user, setUser, clearUser } = useContext(AppContext);
 
   useEffect(() => {
-    const localToken = localStorage.getItem(CONSTANTS.TOKEN);
+    firebase.auth().onAuthStateChanged((firebaseUser) => {
+      if (firebaseUser) {
+        setUser(firebaseUser);
+      } else {
+        clearUser();
+      }
+    });
+  }, [user, setUser, clearUser, history]);
 
-    setToken(localToken);
-  }, []);
+  return (
+    <>
+      <Header user={user} />
+      <Switch>
+        <Route path="/signin" exact>
+          <Signin />
+        </Route>
+        <Route path="/signup" exact>
+          <Signup />
+        </Route>
+        <PrivateRoute user={user} path="/" exact>
+          <Home user={user} />
+        </PrivateRoute>
+        <PrivateRoute user={user} path="/createGame" exact>
+          <CreateGame user={user} />
+        </PrivateRoute>
+      </Switch>
+    </>
+  );
+}
 
+export default function App(): ReactElement {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Header token={token} />
-        <Switch>
-          <Route path="/signin" exact>
-            <Signin />
-          </Route>
-          <Route path="/signup" exact>
-            <Signup />
-          </Route>
-          <PrivateRoute token={token} path="/" exact>
-            <Home />
-          </PrivateRoute>
-        </Switch>
+        <Root />
       </Router>
     </ThemeProvider>
   );

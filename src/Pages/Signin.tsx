@@ -2,18 +2,19 @@ import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Layout, Form, Input, Button } from '../Components';
-import { signUserIn, setLocalStorage, CONSTANTS } from '../utils';
+import { firebase } from '../lib';
 
 export const FormWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 60vh;
 `;
 
 export function Signin(): ReactElement {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('ryanpseery@gmail.com');
+  const [password, setPassword] = useState('test1234');
 
   const history = useHistory();
 
@@ -30,12 +31,15 @@ export function Signin(): ReactElement {
       return;
     }
 
-    const [user, error] = await signUserIn(email, password);
-
-    if (user?.user) {
-      setLocalStorage(CONSTANTS.TOKEN, user?.user?.refreshToken);
-      history.push('/');
-    }
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => {
+        history.push('/');
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (

@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 
-export const Button = styled.button`
+type Props = {
+  color?: string;
+};
+export const Button = styled.button<Props>`
   width: 100%;
-  background-color: ${(props) => props.theme.colors.main};
+  background-color: ${(props) => (props.color ? props.color : props.theme.colors.main)};
   color: ${(props) => props.theme.colors.background};
   border: none;
   padding: 10px 16px;
