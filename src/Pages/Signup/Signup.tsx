@@ -17,6 +17,8 @@ import {
 } from './state';
 
 export function Signup(): ReactElement {
+  const history = useHistory();
+
   const [state, dispatch] = useReducer(reducer, {
     username: '',
     email: '',
@@ -25,8 +27,6 @@ export function Signup(): ReactElement {
     loading: false,
     error: '',
   });
-
-  const history = useHistory();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,6 +94,8 @@ export function Signup(): ReactElement {
         dispatch(setLoadingError(false, err.msg));
       });
   };
+
+  console.log({ state });
 
   return (
     <Layout>

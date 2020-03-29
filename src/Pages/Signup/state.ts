@@ -107,14 +107,17 @@ type Action =
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case ACTIONS.SET_INPUT: {
-      console.log('action: ', action.e.currentTarget);
-      const { value, name } = action.e.target;
-      return { ...state, [name]: value };
+      console.log('action: ', action);
+
+      // return { ...state, [name]: value };
+      return { ...state };
     }
     case ACTIONS.SET_USERNAME:
       return { ...state, username: action.username };
-    case ACTIONS.SET_EMAIL:
+    case ACTIONS.SET_EMAIL: {
+      console.log('email');
       return { ...state, email: action.email };
+    }
     case ACTIONS.SET_PASSWORD:
       return { ...state, password: action.password };
     case ACTIONS.SET_CONFIRM_PASSWORD:

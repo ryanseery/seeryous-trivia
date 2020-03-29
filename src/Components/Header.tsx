@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import { useLocation } from 'react-router-dom';
 import { Link } from './Link';
+import { ROUTES } from '../App';
 
 const HeaderWrapper = styled.nav`
   padding: 1rem;
@@ -36,17 +37,15 @@ export function Header({ user }: Props): ReactElement {
 
   return (
     <HeaderWrapper>
-      <Link to="/signin">
-        <h1>Seeryous Trivia</h1>
-      </Link>
+      <h1>Seeryous Trivia</h1>
       <ul>
         <li>
           {(() => {
             switch (location.pathname) {
               case '/signin':
-                return <Link to="/signup">Sign Up</Link>;
+                return <Link to={ROUTES.SIGNUP}>Sign Up</Link>;
               case '/signup':
-                return <Link to="/signin">Sign In</Link>;
+                return <Link to={ROUTES.SIGNIN}>Sign In</Link>;
               case '/':
                 return <h2>{user?.displayName}</h2>;
               default:

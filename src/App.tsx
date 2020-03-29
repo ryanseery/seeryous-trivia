@@ -1,11 +1,18 @@
 import React, { ReactElement, ReactNode, useContext, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, useHistory } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
 import { theme } from './theme';
 import { Signin, Signup, Home, CreateGame } from './Pages';
 import { Header } from './Components';
 import { AppContext } from './context';
 import { firebase } from './lib';
+
+export enum ROUTES {
+  SIGNIN = '/signin',
+  SIGNUP = '/signup',
+  HOME = '/',
+  CREATE_GAME = '/createGame',
+}
 
 interface IPrivateRoute {
   children: ReactNode | ReactNode[];
@@ -24,7 +31,7 @@ function PrivateRoute({ children, user, ...rest }: IPrivateRoute): ReactElement 
         ) : (
           <Redirect
             to={{
-              pathname: '/signin',
+              pathname: ROUTES.SIGNIN,
               state: { from: location },
             }}
           />
@@ -35,7 +42,6 @@ function PrivateRoute({ children, user, ...rest }: IPrivateRoute): ReactElement 
 }
 
 function Root(): ReactElement {
-  const history = useHistory();
   const { user, setUser, clearUser } = useContext(AppContext);
 
   useEffect(() => {
@@ -46,22 +52,22 @@ function Root(): ReactElement {
         clearUser();
       }
     });
-  }, [user, setUser, clearUser, history]);
+  }, []);
 
   return (
     <>
       <Header user={user} />
       <Switch>
-        <Route path="/signin" exact>
+        <Route path={ROUTES.SIGNIN} exact>
           <Signin />
         </Route>
-        <Route path="/signup" exact>
+        <Route path={ROUTES.SIGNUP} exact>
           <Signup />
         </Route>
-        <PrivateRoute user={user} path="/" exact>
+        <PrivateRoute user={user} path={ROUTES.HOME} exact>
           <Home user={user} />
         </PrivateRoute>
-        <PrivateRoute user={user} path="/createGame" exact>
+        <PrivateRoute user={user} path={ROUTES.CREATE_GAME} exact>
           <CreateGame user={user} />
         </PrivateRoute>
       </Switch>
