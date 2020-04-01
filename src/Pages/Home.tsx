@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 import styled from 'styled-components';
+import firebase from 'firebase/app';
 import { useObject } from 'react-firebase-hooks/database';
 import { Layout, Card, Loading, Link } from '../Components';
-import { firebase } from '../lib';
 
 const HomeWrapper = styled.div`
   padding: 5rem;
@@ -17,23 +17,16 @@ const HomeWrapper = styled.div`
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    h3 {
-      text-transform: capitalize;
-      font-size: ${(props) => props.theme.fontSizes.medium};
-    }
   }
   .games-won {
     text-align: center;
-    h4 {
-      font-size: ${(props) => props.theme.fontSizes.medium};
-    }
   }
 `;
 
 type Props = { authUser: firebase.User };
 
 export function Home({ authUser }: Props): ReactElement {
-  const [data, loading, error] = useObject(firebase.database().ref('users').child(authUser.uid));
+  const [user, loading, error] = useObject(firebase.database().ref('users').child(authUser.uid));
 
   if (loading) {
     return <Loading />;
@@ -49,11 +42,11 @@ export function Home({ authUser }: Props): ReactElement {
         <Card>
           <div className="container">
             <div className="user-name">
-              <h3>{data.val().name}</h3>
-              <img src={data.val().avatar} alt={data.val().name} />
+              <img src={user.val().avatar} alt={user.val().name} />
+              <h3>{user.val().name}</h3>
             </div>
             <div className="games-won">
-              <h4>Games won: {data.val().gamesWon}</h4>
+              <h4>Games won: {user.val().gamesWon}</h4>
             </div>
           </div>
         </Card>

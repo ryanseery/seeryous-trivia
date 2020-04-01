@@ -1,8 +1,8 @@
 import React, { ReactElement, useReducer } from 'react';
 import styled from 'styled-components';
+import firebase from 'firebase/app';
 import { useList } from 'react-firebase-hooks/database';
-import { firebase } from '../../lib';
-import { Layout, Loading, Form, Input, ColorInput, Button } from '../../Components';
+import { Loading, Form, Input, ColorInput, Button } from '../../Components';
 import { Team } from '../../@types/team';
 import { User } from '../../@types/user';
 import { FormWrapper } from '../Signin';

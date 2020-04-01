@@ -48,7 +48,14 @@ export function Signin(): ReactElement {
         <Form onSubmit={handleSubmit}>
           <label htmlFor="email">
             Email
-            <Input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+            />
           </label>
 
           <label htmlFor="password">
@@ -59,6 +66,7 @@ export function Signin(): ReactElement {
               name="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
             />
           </label>
           <Button type="submit">Sign In</Button>

@@ -10,9 +10,10 @@ export function useFirebase() {
     createUser,
     auth,
     user,
+    users,
   } = useContext(FirebaseContext);
 
-  return { doCreateUserWithEmailAndPassword, doSignInWithEmailAndPassword, doSignOut, createUser, auth, user };
+  return { doCreateUserWithEmailAndPassword, doSignInWithEmailAndPassword, doSignOut, createUser, auth, user, users };
 }
 
 export default FirebaseContext;

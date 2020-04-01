@@ -1,5 +1,6 @@
 import firebase from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/database';
 
 const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,10 +13,14 @@ const config = {
   measurementId: process.env.REACT_APP_FIREBASE_MEASUREMENT_ID,
 };
 
+enum REFS {
+  USERS = 'users',
+}
+
 export default class Firebase {
   auth: firebase.auth.Auth;
   db: firebase.database.Database;
-  userRef: firebase.database.Reference;
+  usersRef: firebase.database.Reference;
   constructor() {
     if (!firebase.apps.length) {
       firebase.initializeApp(config);
@@ -23,7 +28,7 @@ export default class Firebase {
 
     this.auth = firebase.auth();
     this.db = firebase.database();
-    this.userRef = firebase.database().ref('users');
+    this.usersRef = firebase.database().ref(REFS.USERS);
   }
 
   // *** Auth API ***
@@ -41,11 +46,11 @@ export default class Firebase {
 
   // *** Database API ***
   createUser = (authUser: firebase.auth.UserCredential) =>
-    this.userRef.child(authUser?.user.uid).set({
+    this.usersRef.child(authUser?.user.uid).set({
       name: authUser?.user.displayName,
       avatar: authUser?.user.photoURL,
       gamesWon: 0,
     });
 
-  user = (uid: string) => this.db.ref(`users/${uid}`);
+  user = (uid: string) => firebase.database().ref(`users/${uid}`);
 }

@@ -55,7 +55,6 @@ export function Signup(): ReactElement {
 
     doCreateUserWithEmailAndPassword(state.email, state.password)
       .then((authUser) => {
-        console.log(authUser);
         if (authUser) {
           authUser?.user
             .updateProfile({
@@ -93,6 +92,7 @@ export function Signup(): ReactElement {
               name="username"
               value={state.username}
               onChange={(e) => dispatch(setUsername(e.target.value))}
+              placeholder="Username"
             />
           </label>
 
@@ -104,6 +104,7 @@ export function Signup(): ReactElement {
               name="email"
               value={state.email}
               onChange={(e) => dispatch(setEmail(e.target.value))}
+              placeholder="Email"
             />
           </label>
 
@@ -115,6 +116,7 @@ export function Signup(): ReactElement {
               name="password"
               value={state.password}
               onChange={(e) => dispatch(setPassword(e.target.value))}
+              placeholder="Password"
             />
           </label>
 
@@ -126,6 +128,7 @@ export function Signup(): ReactElement {
               name="confirmPassword"
               value={state.confirmPassword}
               onChange={(e) => dispatch(setConfirmPassword(e.target.value))}
+              placeholder="Confirm Password"
             />
           </label>
           <Button type="submit">Sign Up</Button>

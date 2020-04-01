@@ -47,7 +47,7 @@ export default function App(): ReactElement {
     auth.onAuthStateChanged((authUser: firebase.User) => {
       authUser ? setAuthUser(authUser) : setAuthUser(null);
     });
-  }, []);
+  }, [auth]);
 
   return (
     <Router>
