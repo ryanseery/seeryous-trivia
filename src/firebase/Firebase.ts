@@ -14,12 +14,16 @@ const config = {
 
 export default class Firebase {
   auth: firebase.auth.Auth;
+  db: firebase.database.Database;
+  userRef: firebase.database.Reference;
   constructor() {
     if (!firebase.apps.length) {
       firebase.initializeApp(config);
     }
 
     this.auth = firebase.auth();
+    this.db = firebase.database();
+    this.userRef = firebase.database().ref('users');
   }
 
   // *** Auth API ***
@@ -37,9 +41,11 @@ export default class Firebase {
 
   // *** Database API ***
   createUser = (authUser: firebase.auth.UserCredential) =>
-    firebase.database().ref('users').child(authUser?.user.uid).set({
+    this.userRef.child(authUser?.user.uid).set({
       name: authUser?.user.displayName,
       avatar: authUser?.user.photoURL,
       gamesWon: 0,
     });
+
+  user = (uid: string) => this.db.ref(`users/${uid}`);
 }
