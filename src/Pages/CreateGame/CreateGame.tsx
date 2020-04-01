@@ -55,9 +55,9 @@ const CreateGameWrapper = styled.div`
   }
 `;
 
-type Props = { user: firebase.User };
+type Props = { authUser: firebase.User };
 
-export function CreateGame({ user }: Props): ReactElement {
+export function CreateGame({ authUser }: Props): ReactElement {
   const [users, loading, error] = useList(firebase.database().ref('users'));
 
   const [state, dispatch] = useReducer(reducer, {

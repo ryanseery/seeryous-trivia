@@ -1,4 +1,4 @@
-import app from 'firebase/app';
+import firebase from 'firebase/app';
 import 'firebase/auth';
 
 const config = {
@@ -13,12 +13,15 @@ const config = {
 };
 
 export default class Firebase {
-  auth: app.auth.Auth;
+  auth: firebase.auth.Auth;
   constructor() {
-    app.initializeApp(config);
+    if (!firebase.apps.length) {
+      firebase.initializeApp(config);
+    }
 
-    this.auth = app.auth();
+    this.auth = firebase.auth();
   }
+
   // *** Auth API ***
   doCreateUserWithEmailAndPassword = (email: string, password: string) =>
     this.auth.createUserWithEmailAndPassword(email, password);
@@ -31,4 +34,12 @@ export default class Firebase {
   doPasswordReset = (email: string) => this.auth.sendPasswordResetEmail(email);
 
   doPasswordUpdate = (password: string) => this.auth.currentUser.updatePassword(password);
+
+  // *** Database API ***
+  createUser = (authUser: firebase.auth.UserCredential) =>
+    firebase.database().ref('users').child(authUser?.user.uid).set({
+      name: authUser?.user.displayName,
+      avatar: authUser?.user.photoURL,
+      gamesWon: 0,
+    });
 }

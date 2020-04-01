@@ -30,10 +30,10 @@ const HomeWrapper = styled.div`
   }
 `;
 
-type Props = { user: firebase.User };
+type Props = { authUser: firebase.User };
 
-export function Home({ user }: Props): ReactElement {
-  const [data, loading, error] = useObject(firebase.database().ref('users').child(user.uid));
+export function Home({ authUser }: Props): ReactElement {
+  const [data, loading, error] = useObject(firebase.database().ref('users').child(authUser.uid));
 
   if (loading) {
     return <Loading />;

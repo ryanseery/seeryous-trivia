@@ -9,6 +9,15 @@ type State = {
   error: string;
 };
 
+export const initialState: State = {
+  username: 'ryan seery',
+  email: 'ryanpseery@gmail.com',
+  password: 'test1234',
+  confirmPassword: 'test1234',
+  loading: false,
+  error: '',
+};
+
 enum ACTIONS {
   SET_INPUT = 'SET_INPUT',
   SET_USERNAME = 'SET_USERNAME',
@@ -18,6 +27,7 @@ enum ACTIONS {
   SET_LOADING = 'SET_LOADING',
   SET_ERROR = 'SET_ERROR',
   SET_LOADING_ERROR = 'SET_LOADING_ERROR',
+  CLEAR_STATE = 'CLEAR_STATE',
 }
 
 type SetInput = {
@@ -94,6 +104,13 @@ export const setLoadingError = (loading: boolean, error: string): SetLoadingErro
   error,
 });
 
+type ClearState = {
+  type: ACTIONS.CLEAR_STATE;
+};
+export const clearState = (): ClearState => ({
+  type: ACTIONS.CLEAR_STATE,
+});
+
 type Action =
   | SetInput
   | SetUsername
@@ -102,20 +119,19 @@ type Action =
   | SetConfirmPassword
   | SetLoading
   | SetError
-  | SetLoadingError;
+  | SetLoadingError
+  | ClearState;
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case ACTIONS.SET_INPUT: {
-      console.log('action: ', action);
+      const { name, value } = action.e.target;
 
-      // return { ...state, [name]: value };
-      return { ...state };
+      return { ...state, [name]: value };
     }
     case ACTIONS.SET_USERNAME:
       return { ...state, username: action.username };
     case ACTIONS.SET_EMAIL: {
-      console.log('email');
       return { ...state, email: action.email };
     }
     case ACTIONS.SET_PASSWORD:
@@ -128,6 +144,8 @@ export function reducer(state: State, action: Action): State {
       return { ...state, error: action.error };
     case ACTIONS.SET_LOADING_ERROR:
       return { ...state, loading: action.loading, error: action.error };
+    case ACTIONS.CLEAR_STATE:
+      return { ...initialState };
     default:
       throw new Error(`Sign Up Reducer Received  Unrecognized Action `);
   }

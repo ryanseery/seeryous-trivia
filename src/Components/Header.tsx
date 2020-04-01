@@ -30,9 +30,9 @@ const HeaderWrapper = styled.nav`
   }
 `;
 
-type Props = { user: firebase.User };
+type Props = { authUser: firebase.User };
 
-export function Header({ user }: Props): ReactElement {
+export function Header({ authUser }: Props): ReactElement {
   const location = useLocation();
 
   return (
@@ -47,9 +47,9 @@ export function Header({ user }: Props): ReactElement {
               case '/signup':
                 return <Link to={ROUTES.SIGNIN}>Sign In</Link>;
               case '/':
-                return <h2>{user?.displayName}</h2>;
+                return <h2>{authUser?.displayName}</h2>;
               default:
-                return <h2>{user?.displayName}</h2>;
+                return <h2>{authUser?.displayName}</h2>;
             }
           })()}
         </li>

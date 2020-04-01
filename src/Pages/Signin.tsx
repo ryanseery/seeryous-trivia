@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import styled from 'styled-components';
 import { useHistory } from 'react-router-dom';
 import { Layout, Form, Input, Button } from '../Components';
-import { firebase } from '../lib';
+import { useFirebase } from '../firebase';
 
 export const FormWrapper = styled.div`
   display: flex;
@@ -13,10 +13,11 @@ export const FormWrapper = styled.div`
 `;
 
 export function Signin(): ReactElement {
+  const { doSignInWithEmailAndPassword } = useFirebase();
+  const history = useHistory();
+
   const [email, setEmail] = useState('ryanpseery@gmail.com');
   const [password, setPassword] = useState('test1234');
-
-  const history = useHistory();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,9 +32,7 @@ export function Signin(): ReactElement {
       return;
     }
 
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
+    doSignInWithEmailAndPassword(email, password)
       .then(() => {
         history.push('/');
       })

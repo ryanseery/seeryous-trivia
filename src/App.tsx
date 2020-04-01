@@ -1,11 +1,9 @@
-import React, { ReactElement, ReactNode, useContext, useEffect } from 'react';
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
-import { ThemeProvider } from 'styled-components';
-import { theme } from './theme';
+import firebase from 'firebase/app';
+import { useFirebase } from './firebase';
 import { Signin, Signup, Home, CreateGame } from './Pages';
 import { Header } from './Components';
-import { AppContext } from './context';
-import { firebase } from './lib';
 
 export enum ROUTES {
   SIGNIN = '/signin',
@@ -18,15 +16,15 @@ interface IPrivateRoute {
   children: ReactNode | ReactNode[];
   path: string;
   exact?: boolean;
-  user: firebase.User;
+  authUser: firebase.User;
 }
 
-function PrivateRoute({ children, user, ...rest }: IPrivateRoute): ReactElement {
+function PrivateRoute({ children, authUser, ...rest }: IPrivateRoute): ReactElement {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        user ? (
+        authUser ? (
           children
         ) : (
           <Redirect
@@ -41,22 +39,19 @@ function PrivateRoute({ children, user, ...rest }: IPrivateRoute): ReactElement 
   );
 }
 
-function Root(): ReactElement {
-  const { user, setUser, clearUser } = useContext(AppContext);
+export default function App(): ReactElement {
+  const { auth } = useFirebase();
+  const [authUser, setAuthUser] = useState<firebase.User | null>(null);
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged((firebaseUser) => {
-      if (firebaseUser) {
-        setUser(firebaseUser);
-      } else {
-        clearUser();
-      }
+    auth.onAuthStateChanged((authUser: firebase.User) => {
+      authUser ? setAuthUser(authUser) : setAuthUser(null);
     });
   }, []);
 
   return (
-    <>
-      <Header user={user} />
+    <Router>
+      <Header authUser={authUser} />
       <Switch>
         <Route path={ROUTES.SIGNIN} exact>
           <Signin />
@@ -64,23 +59,13 @@ function Root(): ReactElement {
         <Route path={ROUTES.SIGNUP} exact>
           <Signup />
         </Route>
-        <PrivateRoute user={user} path={ROUTES.HOME} exact>
-          <Home user={user} />
+        <PrivateRoute authUser={authUser} path={ROUTES.HOME} exact>
+          <Home authUser={authUser} />
         </PrivateRoute>
-        <PrivateRoute user={user} path={ROUTES.CREATE_GAME} exact>
-          <CreateGame user={user} />
+        <PrivateRoute authUser={authUser} path={ROUTES.CREATE_GAME} exact>
+          <CreateGame authUser={authUser} />
         </PrivateRoute>
       </Switch>
-    </>
-  );
-}
-
-export default function App(): ReactElement {
-  return (
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Root />
-      </Router>
-    </ThemeProvider>
+    </Router>
   );
 }

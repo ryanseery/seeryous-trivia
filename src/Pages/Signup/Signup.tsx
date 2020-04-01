@@ -3,10 +3,9 @@ import { useHistory } from 'react-router-dom';
 import md5 from 'md5';
 import { Layout, Form, Input, Button } from '../../Components';
 import { FormWrapper } from '../Signin';
-import { firebase } from '../../lib';
 import {
   reducer,
-  setInput,
+  initialState,
   setError,
   setLoading,
   setLoadingError,
@@ -14,19 +13,16 @@ import {
   setEmail,
   setPassword,
   setConfirmPassword,
+  clearState,
 } from './state';
+import { useFirebase } from '../../firebase';
 
 export function Signup(): ReactElement {
+  const { doCreateUserWithEmailAndPassword, createUser } = useFirebase();
+
   const history = useHistory();
 
-  const [state, dispatch] = useReducer(reducer, {
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    loading: false,
-    error: '',
-  });
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,31 +53,20 @@ export function Signup(): ReactElement {
 
     dispatch(setLoading(true));
 
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(state.email, state.password)
-      .then((createdUser) => {
-        console.log(createdUser);
-        if (createdUser) {
-          createdUser?.user
+    doCreateUserWithEmailAndPassword(state.email, state.password)
+      .then((authUser) => {
+        console.log(authUser);
+        if (authUser) {
+          authUser?.user
             .updateProfile({
               displayName: state.username,
-              photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`,
+              photoURL: `http://gravatar.com/avatar/${md5(authUser.user.email)}?d=identicon`,
             })
             .then(() => {
-              firebase
-                .database()
-                .ref('users')
-                .child(createdUser?.user.uid)
-                .set({
-                  name: createdUser?.user.displayName,
-                  avatar: createdUser?.user.photoURL,
-                  gamesWon: 0,
-                })
-                .then(() => {
-                  dispatch(setLoading(false));
-                  history.push('/');
-                });
+              createUser(authUser).then(() => {
+                dispatch(clearState());
+                history.push('/');
+              });
             })
             .catch((err) => {
               console.error(err);
@@ -95,8 +80,6 @@ export function Signup(): ReactElement {
       });
   };
 
-  console.log({ state });
-
   return (
     <Layout>
       <FormWrapper>
@@ -109,7 +92,7 @@ export function Signup(): ReactElement {
               id="username"
               name="username"
               value={state.username}
-              onChange={(e) => dispatch(setInput(e))}
+              onChange={(e) => dispatch(setUsername(e.target.value))}
             />
           </label>
 

@@ -1,16 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { ThemeProvider } from 'styled-components';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { AppProvider } from './context';
-import Firebase, { FirebaseContext } from './lib/firebaseContext';
+import Firebase, { FirebaseContext } from './firebase';
+import { theme } from './theme';
 
 ReactDOM.render(
   <React.StrictMode>
-    <FirebaseContext.Provider value={new Firebase()}>
-      <App />
-    </FirebaseContext.Provider>
+    <ThemeProvider theme={theme}>
+      <FirebaseContext.Provider value={new Firebase()}>
+        <App />
+      </FirebaseContext.Provider>
+    </ThemeProvider>
   </React.StrictMode>,
   document.getElementById('root'),
 );
